@@ -38,7 +38,7 @@ public class AddFragment extends Fragment implements AddPresenter.AddCallback {
         edtEmail = view.findViewById(R.id.edt_email);
         edtAddress = view.findViewById(R.id.edt_address);
         btnAdd = view.findViewById(R.id.btn_add);
-        addPresenter = new AddPresenter(this);
+        addPresenter = new AddPresenter(this, getContext());
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,12 +68,11 @@ public class AddFragment extends Fragment implements AddPresenter.AddCallback {
 
     @Override
     public void success(User user) {
-        UserDatabase.getInstance(this.getContext()).userDAO().insertUser(user);
         Toast.makeText(this.getContext(), "Add user sucessfully", Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void fail(User user) {
-        Toast.makeText(this.getContext(), "Failed. Please check your email form", Toast.LENGTH_SHORT).show();
+    public void failAdd(String msg) {
+        Toast.makeText(this.getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 }

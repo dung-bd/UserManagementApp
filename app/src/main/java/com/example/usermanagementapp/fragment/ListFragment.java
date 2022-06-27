@@ -25,15 +25,12 @@ import com.example.usermanagementapp.R;
 import com.example.usermanagementapp.UpdateActivity;
 import com.example.usermanagementapp.User;
 import com.example.usermanagementapp.adapter.UserAdapter;
-import com.example.usermanagementapp.database.UserDatabase;
-import com.example.usermanagementapp.presenter.ClickUpdatePresenter;
-import com.example.usermanagementapp.presenter.DeletePresenter;
-import com.example.usermanagementapp.presenter.SearchPresenter;
+import com.example.usermanagementapp.presenter.ListPresentor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListFragment extends Fragment implements DeletePresenter.DeleteCallback, ClickUpdatePresenter.ClickUpdateCallback, SearchPresenter.SearchCallback {
+public class ListFragment extends Fragment implements ListPresentor.Callback {
 
     private static final int MY_CODE = 10;
     private RecyclerView rcvUser;
@@ -41,9 +38,7 @@ public class ListFragment extends Fragment implements DeletePresenter.DeleteCall
     private List<User> listUser;
     private SwipeRefreshLayout swipeRefreshLayout;
     private EditText edtSearch;
-    private DeletePresenter deletePresenter;
-    private ClickUpdatePresenter clickUpdatePresenter;
-    private SearchPresenter searchPresenter;
+    private ListPresentor listPresentor;
 
     @Nullable
     @Override
@@ -56,9 +51,7 @@ public class ListFragment extends Fragment implements DeletePresenter.DeleteCall
         super.onViewCreated(view, savedInstanceState);
         edtSearch = view.findViewById(R.id.edt_search);
         rcvUser = view.findViewById(R.id.rcv_user);
-        deletePresenter = new DeletePresenter(this);
-        clickUpdatePresenter = new ClickUpdatePresenter(this);
-        searchPresenter = new SearchPresenter(this);
+        listPresentor = new ListPresentor(this,this, this , this,  getContext());
 
         listUser = new ArrayList<>();
         userAdapter = new UserAdapter(listUser, new UserAdapter.IclickItemUser() {
@@ -85,7 +78,7 @@ public class ListFragment extends Fragment implements DeletePresenter.DeleteCall
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     String keyword = edtSearch.getText().toString().trim();
-                    searchPresenter.search(keyword);
+                    listPresentor.search(keyword);
                 }
                 return false;
             }
@@ -105,7 +98,7 @@ public class ListFragment extends Fragment implements DeletePresenter.DeleteCall
     }
 
     private void clickUpdateUser(User user) {
-        clickUpdatePresenter.clickUpdate(user);
+        listPresentor.clickUpdate(user);
     }
 
     @Override
@@ -118,24 +111,22 @@ public class ListFragment extends Fragment implements DeletePresenter.DeleteCall
     }
 
     private void clickDeleteUser(final User user) {
-        deletePresenter.delete(user);
+        listPresentor.delete(user);
     }
 
     private void loadData() {
-        listUser = UserDatabase.getInstance(this.getContext()).userDAO().getListUser();
-        userAdapter.setData(listUser);
+        listPresentor.load();
     }
 
 
     @Override
-    public void success(User user) {
+    public void successDelete(User user) {
         new AlertDialog.Builder(getContext())
                 .setTitle("Confirm delete user")
                 .setMessage("Are you sure")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        UserDatabase.getInstance(getContext()).userDAO().deleteUser(user);
                         Toast.makeText(getContext(), "Delete user successfully", Toast.LENGTH_SHORT).show();
 
                         loadData();
@@ -157,15 +148,19 @@ public class ListFragment extends Fragment implements DeletePresenter.DeleteCall
     }
 
     @Override
-    public void successSearch(String keyword) {
-//        String keyword = edtSearch.getText().toString().trim();
-        listUser = new ArrayList<>();
-        listUser = UserDatabase.getInstance(getContext()).userDAO().searchUser(keyword);
-        userAdapter.setData(listUser);
+    public void successSearch(List<User> userList) {
+//        listUser = new ArrayList<>();
+//        listUser = UserDatabase.getInstance(getContext()).userDAO().searchUser(keyword);
+        userAdapter.setData(userList);
     }
 
     @Override
-    public void failSearch(String keyword) {
+    public void failSearch() {
         Toast.makeText(getContext(), "Please fill in the blank", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void successLoad(List<User> users) {
+        userAdapter.setData(users);
     }
 }

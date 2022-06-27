@@ -1,6 +1,7 @@
 package com.example.usermanagementapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -15,11 +16,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.usermanagementapp.database.UserDatabase;
 import com.example.usermanagementapp.presenter.UpdatePresenter;
 
-public class UpdateActivity extends AppCompatActivity implements UpdatePresenter.UpdateCallback {
+public class UpdateActivity extends AppCompatActivity {
+    private static final String KEY_USER = "object_user";
+
     private EditText edtName, edtEmail, edtAddress;
     private Button btnUpdateUser;
-    private User user;
+
     private UpdatePresenter updatePresenter;
+
+    public static void starter(Activity activity, int code, User user) {
+        Intent intent = new Intent(activity, UpdateActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(KEY_USER, user);
+        intent.putExtras(bundle);
+        activity.startActivityForResult(intent, code);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,14 +41,15 @@ public class UpdateActivity extends AppCompatActivity implements UpdatePresenter
         edtEmail = findViewById(R.id.edt_email_update);
         edtName = findViewById(R.id.edt_name_update);
         btnUpdateUser = findViewById(R.id.btn_update_user);
-        updatePresenter = new UpdatePresenter(this);
+        updatePresenter = new UpdatePresenter(new PresenterHandle(this), this);
 
-        user = (User) getIntent().getExtras().get("object_user");
+        User user = (User) getIntent().getExtras().get(KEY_USER);
         if (user != null) {
             edtName.setText(user.getName());
             edtEmail.setText(user.getEmail());
             edtAddress.setText(user.getAddress());
         }
+        updatePresenter.setOriginalData(user);
 
         btnUpdateUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,32 +60,38 @@ public class UpdateActivity extends AppCompatActivity implements UpdatePresenter
     }
 
     private void updateUser() {
-        updatePresenter.update(user);
-    }
-
-
-    @Override
-    public void success(User user) {
         String name = edtName.getText().toString().trim();
         String address = edtAddress.getText().toString().trim();
         String email = edtEmail.getText().toString().trim();
-        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(address) || TextUtils.isEmpty(email)) {
+
+        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(address)) {
             return;
         }
-        user.setName(name);
-        user.setAddress(address);
-        user.setEmail(email);
 
-        UserDatabase.getInstance(getApplicationContext()).userDAO().updateUser(user);
-        Toast.makeText(this, "Update user successfully", Toast.LENGTH_SHORT).show();
+        User user = new User(name, email, address);
 
-        Intent intentResult = new Intent();
-        setResult(Activity.RESULT_OK, intentResult);
-        finish();
+        updatePresenter.update(user);
     }
 
-    @Override
-    public void fail(User user) {
-        Toast.makeText(this, "Update failed", Toast.LENGTH_SHORT).show();
+    private class PresenterHandle implements UpdatePresenter.UpdateCallback {
+        private Context context;
+
+        public PresenterHandle(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public void success(User user) {
+            Toast.makeText(context, "Update user successfully", Toast.LENGTH_SHORT).show();
+
+            Intent intentResult = new Intent();
+            setResult(Activity.RESULT_OK, intentResult);
+            finish();
+        }
+
+        @Override
+        public void fail(String msg) {
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+        }
     }
 }
