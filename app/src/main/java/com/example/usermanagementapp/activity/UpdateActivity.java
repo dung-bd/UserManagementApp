@@ -1,4 +1,4 @@
-package com.example.usermanagementapp;
+package com.example.usermanagementapp.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,7 +13,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.usermanagementapp.database.UserDatabase;
+import com.example.usermanagementapp.R;
+import com.example.usermanagementapp.model.User;
 import com.example.usermanagementapp.presenter.UpdatePresenter;
 
 public class UpdateActivity extends AppCompatActivity {

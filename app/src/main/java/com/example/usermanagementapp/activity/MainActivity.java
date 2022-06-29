@@ -1,4 +1,4 @@
-package com.example.usermanagementapp;
+package com.example.usermanagementapp.activity;
 
 import android.os.Bundle;
 
@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.usermanagementapp.R;
 import com.example.usermanagementapp.adapter.MyViewPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 

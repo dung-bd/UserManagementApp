@@ -22,9 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.usermanagementapp.R;
-import com.example.usermanagementapp.UpdateActivity;
-import com.example.usermanagementapp.User;
+import com.example.usermanagementapp.activity.UpdateActivity;
 import com.example.usermanagementapp.adapter.UserAdapter;
+import com.example.usermanagementapp.model.User;
 import com.example.usermanagementapp.presenter.ListPresentor;
 
 import java.util.ArrayList;
@@ -33,12 +33,21 @@ import java.util.List;
 public class ListFragment extends Fragment implements ListPresentor.Callback {
 
     private static final int MY_CODE = 10;
+    private static final String KEY_USER = "object_user";
     private RecyclerView rcvUser;
     private UserAdapter userAdapter;
     private List<User> listUser;
     private SwipeRefreshLayout swipeRefreshLayout;
     private EditText edtSearch;
     private ListPresentor listPresentor;
+
+    public static void starter(Activity activity, int code, User user) {
+        Intent intent = new Intent(activity, UpdateActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(KEY_USER, user);
+        intent.putExtras(bundle);
+        activity.startActivityForResult(intent, code);
+    }
 
     @Nullable
     @Override
@@ -51,7 +60,16 @@ public class ListFragment extends Fragment implements ListPresentor.Callback {
         super.onViewCreated(view, savedInstanceState);
         edtSearch = view.findViewById(R.id.edt_search);
         rcvUser = view.findViewById(R.id.rcv_user);
-        listPresentor = new ListPresentor(this,this, this , this,  getContext());
+        listPresentor = new ListPresentor(getContext(), this);
+
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadData();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
         listUser = new ArrayList<>();
         userAdapter = new UserAdapter(listUser, new UserAdapter.IclickItemUser() {
@@ -70,7 +88,6 @@ public class ListFragment extends Fragment implements ListPresentor.Callback {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext(), RecyclerView.VERTICAL, false);
         rcvUser.setLayoutManager(linearLayoutManager);
-
         rcvUser.setAdapter(userAdapter);
 
         edtSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -85,20 +102,6 @@ public class ListFragment extends Fragment implements ListPresentor.Callback {
         });
 
         loadData();
-
-        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                loadData();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-
-    }
-
-    private void clickUpdateUser(User user) {
-        listPresentor.clickUpdate(user);
     }
 
     @Override
@@ -109,15 +112,6 @@ public class ListFragment extends Fragment implements ListPresentor.Callback {
             loadData();
         }
     }
-
-    private void clickDeleteUser(final User user) {
-        listPresentor.delete(user);
-    }
-
-    private void loadData() {
-        listPresentor.load();
-    }
-
 
     @Override
     public void successDelete(User user) {
@@ -140,11 +134,12 @@ public class ListFragment extends Fragment implements ListPresentor.Callback {
 
     @Override
     public void successClick(User user) {
-        Intent intent = new Intent(getActivity(), UpdateActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("object_user", user);
-        intent.putExtras(bundle);
-        startActivityForResult(intent, MY_CODE);
+//        Intent intent = new Intent(getActivity(), UpdateActivity.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable("object_user", user);
+//        intent.putExtras(bundle);
+//        startActivityForResult(intent, MY_CODE);
+        starter(getActivity(), MY_CODE, user);
     }
 
     @Override
@@ -162,5 +157,18 @@ public class ListFragment extends Fragment implements ListPresentor.Callback {
     @Override
     public void successLoad(List<User> users) {
         userAdapter.setData(users);
+    }
+
+
+    private void clickUpdateUser(User user) {
+        listPresentor.clickUpdate(user);
+    }
+
+    private void clickDeleteUser(final User user) {
+        listPresentor.delete(user);
+    }
+
+    private void loadData() {
+        listPresentor.load();
     }
 }

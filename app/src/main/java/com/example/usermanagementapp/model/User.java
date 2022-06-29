@@ -1,4 +1,4 @@
-package com.example.usermanagementapp;
+package com.example.usermanagementapp.model;
 
 
 import android.text.TextUtils;

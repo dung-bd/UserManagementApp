@@ -7,21 +7,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.usermanagementapp.R;
-import com.example.usermanagementapp.User;
-import com.example.usermanagementapp.database.UserDatabase;
+import com.example.usermanagementapp.model.User;
 import com.example.usermanagementapp.presenter.AddPresenter;
+import com.google.android.material.snackbar.Snackbar;
 
 public class AddFragment extends Fragment implements AddPresenter.AddCallback {
-    private EditText edtName, edtEmail, edtAddress;
-    private Button btnAdd;
+    private EditText Name, Email, Address;
+    private Button Add;
     private AddPresenter addPresenter;
+    private LinearLayout root;
 
     @Nullable
     @Override
@@ -34,13 +35,13 @@ public class AddFragment extends Fragment implements AddPresenter.AddCallback {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        edtName = view.findViewById(R.id.edt_name);
-        edtEmail = view.findViewById(R.id.edt_email);
-        edtAddress = view.findViewById(R.id.edt_address);
-        btnAdd = view.findViewById(R.id.btn_add);
-        addPresenter = new AddPresenter(this, getContext());
+        root = view.findViewById(R.id.layout);
+        Name = view.findViewById(R.id.edt_name);
+        Email = view.findViewById(R.id.edt_email);
+        Address = view.findViewById(R.id.edt_address);
+        Add = view.findViewById(R.id.btn_add);
 
-        btnAdd.setOnClickListener(new View.OnClickListener() {
+        Add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 handleClickAdd();
@@ -49,9 +50,10 @@ public class AddFragment extends Fragment implements AddPresenter.AddCallback {
     }
 
     private void handleClickAdd() {
-        String name = edtName.getText().toString().trim();
-        String email = edtEmail.getText().toString().trim();
-        String address = edtAddress.getText().toString().trim();
+        String name = Name.getText().toString().trim();
+        String email = Email.getText().toString().trim();
+        String address = Address.getText().toString().trim();
+        addPresenter = new AddPresenter(this, getContext());
 
         if (TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(address)) {
             return;
@@ -61,18 +63,18 @@ public class AddFragment extends Fragment implements AddPresenter.AddCallback {
 
         addPresenter.add(user);
 
-        edtName.setText("");
-        edtAddress.setText("");
-        edtEmail.setText("");
     }
 
     @Override
     public void success(User user) {
-        Toast.makeText(this.getContext(), "Add user sucessfully", Toast.LENGTH_SHORT).show();
+        Snackbar.make(root, "Add user successfully", Snackbar.LENGTH_SHORT).show();
+        Name.setText("");
+        Address.setText("");
+        Email.setText("");
     }
 
     @Override
-    public void failAdd(String msg) {
-        Toast.makeText(this.getContext(), msg, Toast.LENGTH_SHORT).show();
+    public void fail(String msg) {
+        Snackbar.make(root, msg, Snackbar.LENGTH_SHORT).show();
     }
 }

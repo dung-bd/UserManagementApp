@@ -1,11 +1,9 @@
 package com.example.usermanagementapp.presenter;
 
 import android.content.Context;
-import android.widget.Toast;
 
-import com.example.usermanagementapp.UpdateActivity;
-import com.example.usermanagementapp.User;
 import com.example.usermanagementapp.database.UserDatabase;
+import com.example.usermanagementapp.model.User;
 
 public class UpdatePresenter {
     private UpdateCallback updateCallback;

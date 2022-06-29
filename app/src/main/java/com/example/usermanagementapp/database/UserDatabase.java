@@ -7,7 +7,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.example.usermanagementapp.User;
+import com.example.usermanagementapp.model.User;
 
 @Database(entities = {User.class}, version = 1)
 public abstract class UserDatabase extends RoomDatabase {

@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.usermanagementapp.R;
-import com.example.usermanagementapp.User;
+import com.example.usermanagementapp.model.User;
 
 import java.util.List;
 
@@ -18,12 +18,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     private List<User> listUser;
     private IclickItemUser iclickItemUser;
-
-    public interface IclickItemUser {
-        void updateUser(User user);
-
-        void deleteUser(User user);
-    }
 
     public UserAdapter(List<User> listUser, IclickItemUser iclickItemUser) {
         this.listUser = listUser;
@@ -75,7 +69,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     public class UserViewHolder extends RecyclerView.ViewHolder {
-
         private TextView tvName;
         private TextView tvEmail;
         private Button btnUpdate;
@@ -83,12 +76,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
-
             tvName = itemView.findViewById(R.id.tv_username);
             tvEmail = itemView.findViewById(R.id.tv_email);
             btnUpdate = itemView.findViewById(R.id.btn_update);
             btnDelete = itemView.findViewById(R.id.btn_delete);
-
         }
+    }
+
+    public interface IclickItemUser {
+        void updateUser(User user);
+
+        void deleteUser(User user);
     }
 }
