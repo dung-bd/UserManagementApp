@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -56,6 +57,7 @@ public class AddFragment extends Fragment implements AddPresenter.AddCallback {
         addPresenter = new AddPresenter(this, getContext());
 
         if (TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(address)) {
+            Toast.makeText(getContext(), "Please fill in all blank", Toast.LENGTH_SHORT).show();
             return;
         }
 

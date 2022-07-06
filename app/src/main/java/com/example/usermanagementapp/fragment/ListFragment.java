@@ -61,6 +61,7 @@ public class ListFragment extends Fragment implements ListPresentor.Callback {
         edtSearch = view.findViewById(R.id.edt_search);
         rcvUser = view.findViewById(R.id.rcv_user);
         listPresentor = new ListPresentor(getContext(), this);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
 
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -104,6 +105,7 @@ public class ListFragment extends Fragment implements ListPresentor.Callback {
         loadData();
     }
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -134,18 +136,11 @@ public class ListFragment extends Fragment implements ListPresentor.Callback {
 
     @Override
     public void successClick(User user) {
-//        Intent intent = new Intent(getActivity(), UpdateActivity.class);
-//        Bundle bundle = new Bundle();
-//        bundle.putSerializable("object_user", user);
-//        intent.putExtras(bundle);
-//        startActivityForResult(intent, MY_CODE);
         starter(getActivity(), MY_CODE, user);
     }
 
     @Override
     public void successSearch(List<User> userList) {
-//        listUser = new ArrayList<>();
-//        listUser = UserDatabase.getInstance(getContext()).userDAO().searchUser(keyword);
         userAdapter.setData(userList);
     }
 
@@ -170,5 +165,11 @@ public class ListFragment extends Fragment implements ListPresentor.Callback {
 
     private void loadData() {
         listPresentor.load();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadData();
     }
 }

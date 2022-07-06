@@ -1,6 +1,7 @@
 package com.example.usermanagementapp.database;
 
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -28,9 +29,6 @@ public interface UserDAO {
 
     @Delete
     void deleteUser(User user);
-
-    @Query("DELETE FROM user")
-    void deleteAllUser();
 
     @Query("SELECT * FROM user WHERE name LIKE '%' || :name || '%'")
     List<User> searchUser(String name);

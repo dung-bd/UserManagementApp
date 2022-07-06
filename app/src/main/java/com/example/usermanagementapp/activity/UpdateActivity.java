@@ -84,7 +84,6 @@ public class UpdateActivity extends AppCompatActivity {
         @Override
         public void success(User user) {
             Toast.makeText(context, "Update user successfully", Toast.LENGTH_SHORT).show();
-
             Intent intentResult = new Intent();
             setResult(Activity.RESULT_OK, intentResult);
             finish();
