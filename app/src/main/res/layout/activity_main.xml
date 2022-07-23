@@ -4,7 +4,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/parentView"
     tools:context=".activity.MainActivity">
+
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:checkedButton="@id/radio_light"
+        >
+
+        <RadioButton
+            android:id="@+id/radio_dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dark mode"
+            android:textSize="24sp"
+            />
+
+        <RadioButton
+            android:id="@+id/radio_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Light mode"
+            android:textSize="24sp"
+            />
+
+    </RadioGroup>
+
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
